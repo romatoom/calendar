@@ -1,8 +1,8 @@
 <template>
   <div class="date-select">
     <div class="calendar-header">
-      <div class="calendar-month">Июль</div>
-      <div class="calendar-year">2023</div>
+      <div class="calendar-month">{{ monthView }}</div>
+      <div class="calendar-year">{{ year }}</div>
     </div>
 
     <div class="calendar-weak">
@@ -20,19 +20,29 @@
 </template>
 
 <script>
-import getCalendarData from "@/utils/calendarDate.js";
+import {
+  getCalendarData,
+  getNowDate,
+  getDateFromDayMonthYear,
+  getYearMonthDayFromDate,
+  monthFormatter,
+  weekDays,
+} from "@/utils/calendarDate.js";
 
 export default {
   props: {
     initialDate: {
       type: String,
-      default: "",
+      default: getNowDate(),
     },
   },
 
   data() {
     return {
-      currentDate: "",
+      year: null,
+      month: null,
+      day: null,
+      // innerDate:
     };
   },
 
@@ -42,34 +52,53 @@ export default {
     },
   },
 
-  methods: {},
+  methods: {
+    initializeData() {
+      const dateObject = getYearMonthDayFromDate(this.initialDate);
+
+      for (const part in dateObject) {
+        this[part] = dateObject[part];
+      }
+    },
+  },
 
   computed: {
-    weekDays() {
-      return ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+    monthView() {
+      if (!(this.day && this.month && this.year)) return;
+      return monthFormatter.format(new Date(this.currentDate));
     },
 
+    currentDate() {
+      return getDateFromDayMonthYear({
+        day: this.day,
+        month: this.month,
+        year: this.year,
+      });
+    },
+
+    weekDays,
+
     calendarData() {
-      return getCalendarData(this.currentDate);
+      return getCalendarData({
+        month: this.month,
+        year: this.year,
+      });
     },
   },
 
   mounted() {
-    const now = new Date();
-    console.log(now);
-    this.currentDate = this.initialDate;
+    this.initializeData();
   },
 };
 </script>
 
 <style scoped>
 .date-select {
-  width: 300px;
+  width: 350px;
 }
 
 .cell {
   display: flex;
-  padding: 10px;
   justify-content: center;
   align-items: center;
   border: 1px solid #ccc;
@@ -77,7 +106,12 @@ export default {
 
 .calendar-weak,
 .calendar-main {
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-main .cell {
+  padding: 10px 0;
 }
 </style>

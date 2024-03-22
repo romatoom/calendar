@@ -1,11 +1,23 @@
 <template>
-  <input v-model="currentDate" type="text" @click="handleClickInputDate" />
+  <input
+    v-model="currentDate"
+    @click="handleClickInputDate"
+    type="text"
+    placeholder="Выберите дату"
+  />
 
   <MyCalendar
     v-if="calendarIsShowed"
-    :initialDate="currentDate"
+    initialDate="2023-04-22"
     @select-date="handleSetDate"
   />
+
+  <!--
+    <MyCalendar
+      v-if="calendarIsShowed"
+      @select-date="handleSetDate"
+    />
+  -->
 </template>
 
 <script>
@@ -15,7 +27,7 @@ export default {
 
   data() {
     return {
-      currentDate: "2023-07-26",
+      currentDate: null,
       calendarIsShowed: false,
     };
   },

@@ -1,8 +1,14 @@
 <template>
   <div class="date-select">
     <div class="calendar-header">
-      <div class="calendar-month">{{ monthView }}</div>
-      <div class="calendar-year">{{ year }}</div>
+      <div class="change-month prev" @click="setPrevMonth">◀</div>
+
+      <div class="current-date">
+        <span class="calendar-month">{{ formattedViewedMonth }}</span>
+        <span class="calendar-year">{{ viewedYear }}</span>
+      </div>
+
+      <div class="change-month next" @click="setNextMonth">►</div>
     </div>
 
     <div class="calendar-weak">
@@ -12,8 +18,17 @@
     </div>
 
     <div class="calendar-main">
-      <div v-for="item in calendarData" :key="item" class="cell">
-        {{ item }}
+      <div
+        v-for="(item, key) in calendarData"
+        :key="key"
+        class="cell"
+        :class="{
+          disabled: !item.enabled,
+          selected: isSelected(item),
+        }"
+        @click="handleSelectDay(item)"
+      >
+        {{ item.day }}
       </div>
     </div>
   </div>
@@ -27,6 +42,8 @@ import {
   getYearMonthDayFromDate,
   monthFormatter,
   weekDays,
+  prevMonthData,
+  nextMonthData,
 } from "@/utils/calendarDate.js";
 
 export default {
@@ -42,7 +59,10 @@ export default {
       year: null,
       month: null,
       day: null,
-      // innerDate:
+      locale: "ru",
+
+      viewedYear: null,
+      viewedMonth: null,
     };
   },
 
@@ -59,13 +79,57 @@ export default {
       for (const part in dateObject) {
         this[part] = dateObject[part];
       }
+
+      this.viewedYear = dateObject.year;
+      this.viewedMonth = dateObject.month;
+    },
+
+    handleSelectDay(item) {
+      if (!item.enabled) return;
+      this.day = item.day;
+      this.month = this.viewedMonth;
+      this.year = this.viewedYear;
+    },
+
+    setViewedMonthAndYear({ month, year }) {
+      this.viewedMonth = month;
+      this.viewedYear = year;
+    },
+
+    setNextMonth() {
+      const nextMonth = nextMonthData({
+        month: this.viewedMonth,
+        year: this.viewedYear,
+      });
+
+      this.setViewedMonthAndYear(nextMonth);
+    },
+
+    setPrevMonth() {
+      const prevMonth = prevMonthData({
+        month: this.viewedMonth,
+        year: this.viewedYear,
+      });
+
+      this.setViewedMonthAndYear(prevMonth);
+    },
+
+    isSelected(item) {
+      console.log(item);
+      return (
+        item.enabled &&
+        item.day === this.day &&
+        this.viewedMonth === this.month &&
+        this.viewedYear === this.year
+      );
     },
   },
 
   computed: {
-    monthView() {
-      if (!(this.day && this.month && this.year)) return;
-      return monthFormatter.format(new Date(this.currentDate));
+    formattedViewedMonth() {
+      return monthFormatter(this.locale).format(
+        new Date(this.viewedYear, this.viewedMonth, 1)
+      );
     },
 
     currentDate() {
@@ -76,13 +140,18 @@ export default {
       });
     },
 
-    weekDays,
+    weekDays() {
+      return weekDays(this.locale);
+    },
 
     calendarData() {
-      return getCalendarData({
-        month: this.month,
-        year: this.year,
-      });
+      return getCalendarData(
+        {
+          month: this.viewedMonth,
+          year: this.viewedYear,
+        },
+        this.locale
+      );
     },
   },
 
@@ -97,11 +166,23 @@ export default {
   width: 350px;
 }
 
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.current-date {
+  display: flex;
+  gap: 5px;
+}
+
 .cell {
+  box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #ccc;
+  border: 1px solid transparent;
 }
 
 .calendar-weak,
@@ -113,5 +194,22 @@ export default {
 
 .calendar-main .cell {
   padding: 10px 0;
+  cursor: pointer;
+}
+
+.calendar-main .cell.disabled {
+  pointer-events: none;
+  cursor: default;
+  color: var(--gray);
+}
+
+.calendar-main .cell.selected {
+  border: 1px solid var(--gray);
+  border-radius: 6px;
+}
+
+.change-month {
+  cursor: pointer;
+  padding: 10px;
 }
 </style>

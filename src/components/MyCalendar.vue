@@ -25,6 +25,7 @@
         :class="{
           disabled: !item.enabled,
           selected: isSelected(item),
+          current: isNowDay(item),
         }"
         @click="handleSelectDay(item)"
       >
@@ -67,14 +68,20 @@ export default {
   },
 
   watch: {
-    currentDate() {
-      this.$emit("select-date", this.currentDate);
+    currentDate(value, old) {
+      console.log(`${old}->${value}`);
+      if (value !== this.initialDate) {
+        this.$emit("select-date", this.currentDate);
+      }
     },
   },
 
   methods: {
     initializeData() {
-      const dateObject = getYearMonthDayFromDate(this.initialDate);
+      const dateObject =
+        this.initialDate === ""
+          ? getYearMonthDayFromDate(getNowDate())
+          : getYearMonthDayFromDate(this.initialDate);
 
       for (const part in dateObject) {
         this[part] = dateObject[part];
@@ -89,6 +96,11 @@ export default {
       this.day = item.day;
       this.month = this.viewedMonth;
       this.year = this.viewedYear;
+
+      //if (value !== this.initialDate) {
+      this.$emit("select-date", this.currentDate);
+      this.$emit("close");
+      //}
     },
 
     setViewedMonthAndYear({ month, year }) {
@@ -115,7 +127,6 @@ export default {
     },
 
     isSelected(item) {
-      console.log(item);
       return (
         item.enabled &&
         item.day === this.day &&
@@ -123,12 +134,27 @@ export default {
         this.viewedYear === this.year
       );
     },
+
+    isNowDay(item) {
+      const { day, month, year } = this.getNowYearMonthDay;
+
+      return (
+        item.enabled &&
+        item.day === day &&
+        this.viewedMonth === month &&
+        this.viewedYear === year
+      );
+    },
   },
 
   computed: {
+    getNowYearMonthDay() {
+      return getYearMonthDayFromDate(getNowDate());
+    },
+
     formattedViewedMonth() {
       return monthFormatter(this.locale).format(
-        new Date(this.viewedYear, this.viewedMonth, 1)
+        new Date(this.viewedYear, this.viewedMonth - 1, 1)
       );
     },
 
@@ -163,7 +189,14 @@ export default {
 
 <style scoped>
 .date-select {
+  position: absolute;
+  top: 50px;
+  z-index: 1000;
+  background-color: white;
   width: 350px;
+  padding: 20px;
+  border: 1px solid var(--gray);
+  border-radius: 12px;
 }
 
 .calendar-header {
@@ -203,12 +236,25 @@ export default {
   color: var(--gray);
 }
 
-.calendar-main .cell.selected {
-  border: 1px solid var(--gray);
+.calendar-main .cell {
   border-radius: 6px;
 }
 
+.calendar-main .cell:hover {
+  border: 1px solid var(--primary);
+}
+
+.calendar-main .cell.selected {
+  background-color: var(--primary);
+  color: var(--primary-light);
+}
+
+.calendar-main .cell.current {
+  font-weight: bold;
+}
+
 .change-month {
+  color: var(--primary);
   cursor: pointer;
   padding: 10px;
 }

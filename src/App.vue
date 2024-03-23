@@ -1,23 +1,21 @@
 <template>
-  <input
-    v-model="currentDate"
-    @click="handleClickInputDate"
-    type="text"
-    placeholder="Выберите дату"
-  />
+  <div class="date-input-block">
+    <input
+      v-model="currentDate"
+      @click="toggleCalendarVisible"
+      type="text"
+      placeholder="Выберите дату"
+      class="date-select"
+      readonly
+    />
 
-  <MyCalendar
-    v-if="calendarIsShowed"
-    initialDate="2023-04-22"
-    @select-date="handleSetDate"
-  />
-
-  <!--
     <MyCalendar
       v-if="calendarIsShowed"
+      :initialDate="currentDate"
       @select-date="handleSetDate"
+      @close="toggleCalendarVisible"
     />
-  -->
+  </div>
 </template>
 
 <script>
@@ -27,7 +25,7 @@ export default {
 
   data() {
     return {
-      currentDate: null,
+      currentDate: "",
       calendarIsShowed: false,
     };
   },
@@ -37,11 +35,19 @@ export default {
       this.currentDate = date;
     },
 
-    handleClickInputDate() {
-      this.calendarIsShowed = true;
+    toggleCalendarVisible() {
+      this.calendarIsShowed = !this.calendarIsShowed;
     },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.date-input-block {
+  position: relative;
+}
+
+input.date-select {
+  padding: 10px;
+}
+</style>

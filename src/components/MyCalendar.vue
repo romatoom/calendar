@@ -53,6 +53,11 @@ export default {
       type: String,
       default: getNowDate(),
     },
+
+    locale: {
+      type: String,
+      default: "ru",
+    },
   },
 
   data() {
@@ -60,7 +65,6 @@ export default {
       year: null,
       month: null,
       day: null,
-      locale: "ru",
 
       viewedYear: null,
       viewedMonth: null,
@@ -68,8 +72,7 @@ export default {
   },
 
   watch: {
-    currentDate(value, old) {
-      console.log(`${old}->${value}`);
+    currentDate(value) {
       if (value !== this.initialDate) {
         this.$emit("select-date", this.currentDate);
       }
@@ -97,10 +100,8 @@ export default {
       this.month = this.viewedMonth;
       this.year = this.viewedYear;
 
-      //if (value !== this.initialDate) {
       this.$emit("select-date", this.currentDate);
       this.$emit("close");
-      //}
     },
 
     setViewedMonthAndYear({ month, year }) {

@@ -85,12 +85,6 @@ function nextMonthData({ month, year }) {
   return { month: date.getMonth() + 1, year: date.getFullYear() };
 }
 
-/*
-const getPartFromDate = (date, part) => {
-  return date.split("-")[PARTS_INDEXES[part]];
-};
-*/
-
 const getYearMonthDayFromDate = (date) => {
   const result = {};
   const splittedDate = date.split("-");

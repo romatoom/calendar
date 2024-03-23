@@ -1,7 +1,6 @@
-# Vue 3 + Vite
+# Компонент выбора даты (календарь)
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
-
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (previously Volar) and disable Vetur
+<img width="411" alt="Снимок экрана 2024-03-23 в 15 47 32" src="https://github.com/romatoom/calendar/assets/20795373/1e6dd179-fb05-46d2-b953-eec906faf0b7">
+<img width="412" alt="Снимок экрана 2024-03-23 в 15 47 08" src="https://github.com/romatoom/calendar/assets/20795373/c8c15aa4-ef20-45b8-9f79-0da9ddc6f42d">
+<img width="414" alt="Снимок экрана 2024-03-23 в 15 46 45" src="https://github.com/romatoom/calendar/assets/20795373/b7f2cc35-e706-4f75-bd45-2c8acf40a875">
+<img width="408" alt="Снимок экрана 2024-03-23 в 15 49 59" src="https://github.com/romatoom/calendar/assets/20795373/f0a617fb-f38e-40f5-8789-a3517ab0ef3b">
